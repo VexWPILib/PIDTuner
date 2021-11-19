@@ -1,2 +1,3 @@
 # PIDTuner
-For tuning drivetrains that use PID
+
+Use this program to tune your PID for your drivetrain after running `PhysicalDriveTuner`
