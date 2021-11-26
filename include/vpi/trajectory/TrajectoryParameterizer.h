@@ -1,3 +1,7 @@
+// Copyright (c) VexWPIApi contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the VexWPIApi BSD license file in the root directory of this project.
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -34,6 +38,7 @@
 
 #include <stdio.h>
 
+#include "vpi/log/Logger.h"
 #include "vpi/trajectory/Trajectory.h"
 #include "vpi/trajectory/TrajectoryConstraint.h"
 
@@ -43,8 +48,6 @@ namespace vpi {
  */
 class TrajectoryParameterizer {
  public:
-  using PoseWithCurvature = std::pair<Pose2d, QCurvature>;
-
   /**
    * Parameterize the trajectory by time. This is where the velocity profile is
    * generated.
@@ -65,7 +68,7 @@ class TrajectoryParameterizer {
    * @return The trajectory.
    */
   static Trajectory TimeParameterizeTrajectory(
-      const std::vector<PoseWithCurvature>& points,
+      const std::vector<Pose2dWithCurvature>& points,
       const std::vector<std::unique_ptr<TrajectoryConstraint>>& constraints,
       QSpeed startVelocity,
       QSpeed endVelocity,
@@ -81,7 +84,7 @@ class TrajectoryParameterizer {
    * the trajectory, max velocity, min acceleration and max acceleration.
    */
   struct ConstrainedState {
-    PoseWithCurvature pose = {Pose2d(), 0.0_radpermeter};
+    Pose2dWithCurvature pose = Pose2dWithCurvature();
     QLength distance = 0_m;
     QSpeed maxVelocity = 0_mps;
     QAcceleration minAcceleration = 0_mps2;

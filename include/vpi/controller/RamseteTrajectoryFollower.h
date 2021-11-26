@@ -4,9 +4,11 @@
 
 #pragma once
 
+#include "vpi/controller/RamseteController.h"
 #include "vpi/chassis/DifferentialDriveChassis.h"
 #include "vpi/kinematics/ChassisSpeeds.h"
 #include "vpi/kinematics/DifferentialDriveWheelSpeeds.h"
+#include "vpi/log/Logger.h"
 #include "vpi/trajectory/Trajectory.h"
 #include "vpi/units/QTime.h"
 
@@ -15,14 +17,22 @@ namespace vpi {
    * For each point, simply turns to face the next point, then drives to it
    * stopping at each point.
    */
-class SimpleTrajectoryFollower {
+class RamseteTrajectoryFollower {
   public:
-    SimpleTrajectoryFollower(DifferentialDriveChassis &chassis) :
-        m_chassis(chassis) {}
+    RamseteTrajectoryFollower(DifferentialDriveChassis &chassis,
+                              Pose2d tolerance,
+                              double b=2.0, double zeta=0.7) :
+        m_chassis(chassis), m_rc(b, zeta) {
+      m_rc.SetTolerance(tolerance);
+      if(!m_chassis.IsOdomEnabled()) {
+        m_chassis.EnableOdom();
+      }
+    }
 
     void FollowTrajectory(Trajectory t);
 
   protected:
     DifferentialDriveChassis &m_chassis;
+    RamseteController m_rc;
 };
 } // vpi

@@ -1,3 +1,7 @@
+// Copyright (c) VexWPIApi contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the VexWPIApi BSD license file in the root directory of this project.
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -28,9 +32,9 @@ class Transform2d {
    * Constructs a transform with the given translation and rotation components.
    *
    * @param translation Translational component of the transform.
-   * @param rotation Rotational component of the transform.
+   * @param r Rotational component of the transform.
    */
-  Transform2d(Translation2d translation, Rotation2d rotation);
+  Transform2d(Translation2d translation, Rotation2d r);
 
   /**
    * Constructs the identity transform -- maps an initial pose to itself.
