@@ -82,7 +82,7 @@ void testForward() {
   vex::motor_group mg_right{mr1, mr2, mr3};
   DifferentialDriveChassisPID m_chassis(mg_left, mg_right, 
                                         ROBOT_WHEEL_TRACK, ROBOT_WHEEL_DIAMETER, 
-                                        vpi::ui::PID_d, vpi::ui::PID_a, vpi::ui::PID_t,
+                                        PID_d, PID_a, PID_t,
                                         ROBOT_GEAR_SETTING, ROBOT_GEAR_RATIO, vex::brakeType::coast);
   m_chassis.DriveDistance(8_ft, 2_ftps, true);
 } 
@@ -98,7 +98,7 @@ void testBackward() {
   vex::motor_group mg_right{mr1, mr2, mr3};
   DifferentialDriveChassisPID m_chassis(mg_left, mg_right, 
                                         ROBOT_WHEEL_TRACK, ROBOT_WHEEL_DIAMETER, 
-                                        vpi::ui::PID_d, vpi::ui::PID_a, vpi::ui::PID_t,
+                                        PID_d, PID_a, PID_t,
                                         ROBOT_GEAR_SETTING, ROBOT_GEAR_RATIO, vex::brakeType::coast);
   m_chassis.DriveDistance(-8_ft, 2_ftps, true);
 } 
@@ -114,7 +114,7 @@ void testTurn() {
   vex::motor_group mg_right{mr1, mr2, mr3};
   DifferentialDriveChassisPID m_chassis(mg_left, mg_right, 
                                         ROBOT_WHEEL_TRACK, ROBOT_WHEEL_DIAMETER, 
-                                        vpi::ui::PID_d, vpi::ui::PID_a, vpi::ui::PID_t,
+                                        PID_d, PID_a, PID_t,
                                         ROBOT_GEAR_SETTING, ROBOT_GEAR_RATIO, vex::brakeType::coast);
   m_chassis.TurnAngle(720_deg, 360_dps, true);
 }
@@ -133,13 +133,13 @@ void setStartingPosition() {
 //
 int main() {
   // Set up callbacks for autonomous and driver control periods.
-
-  // Display the physical tuning options on the Brain
-  v5_lv_init();
-  vpi::ui::pidTuningInit();
+  Competition.bStopAllTasksBetweenModes = false;
 
   // Run the pre-autonomous function.
   pre_auton();
+
+  // Initialize the display
+  initButtons();
 
   controller c;
   int i = 0;

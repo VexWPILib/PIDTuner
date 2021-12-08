@@ -6,18 +6,16 @@
 
 #include <stdio.h>
 
-#include "v5lvgl.h"
-#include "lv_conf.h"
 #include "vpi/pid/PIDController.h"
 
 #pragma once
 
-namespace vpi {
-  namespace ui {
-    extern PIDFParameters PID_d;
-    extern PIDFParameters PID_a;
-    extern PIDFParameters PID_t;
+using namespace vpi;
 
-    void pidTuningInit();
-  } // ui
-} // vpi
+extern PIDFParameters PID_d;
+extern PIDFParameters PID_a;
+extern PIDFParameters PID_t;
+
+void initButtons();
+void updatePIDValue(int datId, int pidId, double d);
+void displayPIDValue(int datId);

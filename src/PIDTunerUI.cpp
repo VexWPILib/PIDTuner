@@ -2,23 +2,265 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the VexWPIApi BSD license file in the root directory of this project.
 
+// Copyright (C) 2019 by James Pearman
+//
+// Permission is hereby granted, free of charge, to any person obtaining 
+// a copy of this software and associated documentation files (the 
+// "Software"), to deal in the Software without restriction, including 
+// without l> imitation the rights to use, copy, modify, merge, publish, 
+// distribute, sublicense, and/or sell copies of the Software, and to 
+// permit persons to whom the Software is furnished to do so, subject 
+// to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included 
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #include "PIDTunerUI.h"
+#include "Button.h"
 
-namespace vpi {
+using namespace vpi;
 
-  namespace ui {
+PIDFParameters PID_d(1.0,0,0,0);
+PIDFParameters PID_a(1.0,0,0,0);
+PIDFParameters PID_t(1.0,0,0,0);
 
-    using namespace vpi;
+#define PID_BUTTONS_X_START 20
+#define PID_BUTTONS_Y_START 20
+#define PID_BUTTONS_WIDTH 40
+#define PID_BUTTONS_HEIGHT 40
 
-    PIDFParameters PID_d(1.0,0,0,0);
-    PIDFParameters PID_a(1.0,0,0,0);
-    PIDFParameters PID_t(1.0,0,0,0);
+#define DAT_BUTTONS_X_START 20
+#define DAT_BUTTONS_Y_START 20
+#define DAT_BUTTONS_WIDTH 80
+#define DAT_BUTTONS_HEIGHT 40
 
-    const char *btnmMapP[] = {"-.05", "-.01", "-.001", "+.001", "+.01", "+.05", "P", ""};
-    const char *btnmMapI[] = {"-.05", "-.01", "-.001", "+.001", "+.01", "+.05", "I", ""};
-    const char *btnmMapD[] = {"-.05", "-.01", "-.001", "+.001", "+.01", "+.05", "D", ""};
-    const char *btnmMapDAT[] = {"D", "\n", "A", "\n", "T", ""};
+double CHANGE_AMOUNT[] = {-0.05, -0.01, -0.001, .001, .01, .05 };
 
+button buttonsP[] = {
+  {PID_BUTTONS_X_START + 0 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 0 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, "-.05", "-.05", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 1 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 0 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, "-.01", "-.01", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 2 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 0 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, "-.001", "-.001", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 3 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 0 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, ".001", ".001", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 4 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 0 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, ".01", ".01", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 5 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 0 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, ".05", ".05", false, vex::color::blue, vex::color::cyan},
+};
+
+button buttonsI[] = {
+  {PID_BUTTONS_X_START + 0 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 1 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, "-.05", "-.05", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 1 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 1 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, "-.01", "-.01", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 2 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 1 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, "-.001", "-.001", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 3 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 1 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, ".001", ".001", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 4 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 1 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, ".01", ".01", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 5 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 1 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, ".05", ".05", false, vex::color::blue, vex::color::cyan},
+};
+
+button buttonsD[] = {
+  {PID_BUTTONS_X_START + 0 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 2 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, "-.05", "-.05", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 1 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 2 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, "-.01", "-.01", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 2 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 2 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, "-.001", "-.001", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 3 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 2 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, ".001", ".001", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 4 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 2 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, ".01", ".01", false, vex::color::blue, vex::color::cyan},
+  {PID_BUTTONS_X_START + 5 * (PID_BUTTONS_WIDTH + 10), PID_BUTTONS_Y_START + 2 * (PID_BUTTONS_HEIGHT + 10), 
+    PID_BUTTONS_WIDTH, PID_BUTTONS_HEIGHT, ".05", ".05", false, vex::color::blue, vex::color::cyan},
+};
+
+button buttonsDAT[] = {
+  {DAT_BUTTONS_X_START + 0 * (DAT_BUTTONS_WIDTH + 10), DAT_BUTTONS_Y_START + 3 * (DAT_BUTTONS_HEIGHT + 10), 
+    DAT_BUTTONS_WIDTH, DAT_BUTTONS_HEIGHT, "Drive", "Drive", false, vex::color::blue, vex::color::cyan},
+  {DAT_BUTTONS_X_START + 1 * (DAT_BUTTONS_WIDTH + 10), DAT_BUTTONS_Y_START + 3 * (DAT_BUTTONS_HEIGHT + 10), 
+    DAT_BUTTONS_WIDTH, DAT_BUTTONS_HEIGHT, "Angle", "Angle", false, vex::color::blue, vex::color::cyan},
+  {DAT_BUTTONS_X_START + 2 * (DAT_BUTTONS_WIDTH + 10), DAT_BUTTONS_Y_START + 3 * (DAT_BUTTONS_HEIGHT + 10), 
+    DAT_BUTTONS_WIDTH, DAT_BUTTONS_HEIGHT, "Turn", "Turn", false, vex::color::blue, vex::color::cyan}
+};
+
+int datSelected = 0;
+
+int findButton( button *buttons, int nButtons,  int16_t xpos, int16_t ypos ) {
+  for( int index=0;index < nButtons;index++) {
+    button *pButton = &buttons[ index ];
+    if( xpos < pButton->xpos || xpos > (pButton->xpos + pButton->width) )
+      continue;
+
+    if( ypos < pButton->ypos || ypos > (pButton->ypos + pButton->height) )
+      continue;
+    
+    return(index);
+  }
+  return (-1);
+}
+
+void setSelected( button *buttons, int nButtons,  int16_t selectedIndex ) {
+  for( int index=0;index < nButtons;index++) {
+    button *pButton = &buttons[ index ];
+    pButton->state = (index == selectedIndex ? true : false);
+  }
+}
+
+void updatePIDValue(int datId, int pidId, double d) {
+  if(datId == 0) {
+    // Drive PID
+    if(pidId == 0 ){
+      PID_d.Kp += d;
+    } else if(pidId == 1 ){
+      PID_d.Ki += d;
+    } else {
+      PID_d.Kd += d;
+    }
+  } else if(datId == 1) {
+    // Angle PID
+    if(pidId == 0 ){
+      PID_a.Kp += d;
+    } else if(pidId == 1 ){
+      PID_a.Ki += d;
+    } else {
+      PID_a.Kd += d;
+    }
+  } else {
+    // Turn PID
+    if(pidId == 0 ){
+      PID_t.Kp += d;
+    } else if(pidId == 1 ){
+      PID_t.Ki += d;
+    } else {
+      PID_t.Kd += d;
+    }
+  }
+}
+
+void displayPIDValue(int datId) {
+  int px = PID_BUTTONS_X_START + 6 * (PID_BUTTONS_WIDTH + 10);
+  int py = PID_BUTTONS_Y_START + 0 * (PID_BUTTONS_HEIGHT + 10) + PID_BUTTONS_HEIGHT / 2;
+  int ix = PID_BUTTONS_X_START + 6 * (PID_BUTTONS_WIDTH + 10);
+  int iy = PID_BUTTONS_Y_START + 1 * (PID_BUTTONS_HEIGHT + 10) + PID_BUTTONS_HEIGHT / 2;
+  int dx = PID_BUTTONS_X_START + 6 * (PID_BUTTONS_WIDTH + 10);
+  int dy = PID_BUTTONS_Y_START + 2 * (PID_BUTTONS_HEIGHT + 10) + PID_BUTTONS_HEIGHT / 2;
+  Brain.Screen.setPenColor(vex::color::black);
+  Brain.Screen.drawRectangle(px, py, 50, 50, vex::color::black);
+  Brain.Screen.drawRectangle(ix, iy, 50, 50, vex::color::black);
+  Brain.Screen.drawRectangle(dx, dy, 50, 50, vex::color::black);
+  Brain.Screen.setPenColor(vex::color::white);
+  if(datId == 0) {
+    // Drive PID
+    printf("DRIVE PID:\n");
+    Brain.Screen.printAt(px, py, false, "P=%.3f", PID_d.Kp);
+    printf("P=%.3f\n", PID_d.Kp);
+    Brain.Screen.printAt(ix, iy, false, "I=%.3f", PID_d.Ki);
+    printf("I=%.3f\n", PID_d.Ki);
+    Brain.Screen.printAt(dx, dy, false, "D=%.3f", PID_d.Kd);
+    printf("D=%.3f\n", PID_d.Kd);
+  } else if(datId == 1) {
+    // Angle PID
+    printf("ANGLE PID:\n");
+    Brain.Screen.printAt(px, py, false, "P=%.3f", PID_a.Kp);
+    printf("P=%.3f\n", PID_a.Kp);
+    Brain.Screen.printAt(ix, iy, false, "I=%.3f", PID_a.Ki);
+    printf("I=%.3f\n", PID_a.Ki);
+    Brain.Screen.printAt(dx, dy, false, "D=%.3f", PID_a.Kd);
+    printf("D=%.3f\n", PID_a.Kd);
+  } else {
+    // Turn PID
+    printf("TURN PID:\n");
+    Brain.Screen.printAt(px, py, false, "P=%.3f", PID_t.Kp);
+    printf("P=%.3f\n", PID_t.Kp);
+    Brain.Screen.printAt(ix, iy, false, "I=%.3f", PID_t.Ki);
+    printf("I=%.3f\n", PID_t.Ki);
+    Brain.Screen.printAt(dx, dy, false, "D=%.3f", PID_t.Kd);
+    printf("D=%.3f\n", PID_t.Kd);
+  }
+}
+
+void userTouchCallbackReleased() {
+  int index;
+  int xpos = Brain.Screen.xPosition();
+  int ypos = Brain.Screen.yPosition();
+
+  int nPButtons = sizeof(buttonsP) / sizeof(button);
+  int nIButtons = sizeof(buttonsI) / sizeof(button);
+  int nDButtons = sizeof(buttonsD) / sizeof(button);
+  int nDATButtons = sizeof(buttonsDAT) / sizeof(button);
+
+  if( (index = findButton(buttonsP, nPButtons, xpos, ypos )) >= 0 ) {
+    printf("Update P by index %d\n",index);
+    updatePIDValue(datSelected, 0, CHANGE_AMOUNT[index]); // Update P
+  } else if( (index = findButton(buttonsI, nIButtons, xpos, ypos )) >= 0 ) {
+    printf("Update I by index %d\n",index);
+    updatePIDValue(datSelected, 1, CHANGE_AMOUNT[index]); // Update I
+  } else if( (index = findButton(buttonsD, nDButtons, xpos, ypos )) >= 0 ) {
+    printf("Update D by index %d\n",index);
+    updatePIDValue(datSelected, 2, CHANGE_AMOUNT[index]); // Update D
+  } else if( (index = findButton(buttonsDAT, nDATButtons, xpos, ypos )) >= 0 ) {
+    datSelected = index;
+    setSelected(buttonsDAT, nDATButtons, datSelected);
+    printf("Update DAT by index %d\n",index);
+  }
+  Brain.Screen.clearScreen();
+  drawButtons(buttonsP, nPButtons);
+  drawButtons(buttonsI, nIButtons);
+  drawButtons(buttonsD, nDButtons);
+  drawButtons(buttonsDAT, nDATButtons);
+  displayPIDValue(datSelected);
+}
+
+void drawButtons(button *buttons, int nButtons) {
+  for( int index=0;index < nButtons;index++) {
+    button *b = &buttons[ index ];
+    vex::color c = vex::color::blue;
+    c = b->colorUnselected;
+    const char *text = b->label;
+    if (b->state) {
+      c = b->colorSelected;
+      text = b->labelSelected;
+    }
+
+    Brain.Screen.setFillColor(c);
+    Brain.Screen.drawRectangle(b->xpos, b->ypos, b->width, b->height);
+    int x = b->xpos + b->width / 2 - Brain.Screen.getStringWidth(text) / 2;
+    int y = b->ypos + b->height / 2 + Brain.Screen.getStringHeight(text) / 2;
+    Brain.Screen.printAt(x, y, false, text);
+  }
+}
+
+void initButtons() {
+  int nPButtons = sizeof(buttonsP) / sizeof(button);
+  int nIButtons = sizeof(buttonsI) / sizeof(button);
+  int nDButtons = sizeof(buttonsD) / sizeof(button);
+  int nDATButtons = sizeof(buttonsDAT) / sizeof(button);
+  drawButtons(buttonsP, nPButtons);
+  drawButtons(buttonsI, nIButtons);
+  drawButtons(buttonsD, nDButtons);
+  setSelected(buttonsDAT, nDATButtons, datSelected);
+  drawButtons(buttonsDAT, nDATButtons);
+  displayPIDValue(datSelected);
+
+  Brain.Screen.released( userTouchCallbackReleased );
+}
+
+#if 0
     lv_obj_t *pBtnm;
     lv_obj_t *pLabel;
     lv_obj_t *iBtnm;
@@ -334,6 +576,4 @@ namespace vpi {
       lv_obj_add_style(datBtnm,LV_BTNMATRIX_PART_BTN, &style2);
 
     }
-
-  } // namespace ui
-} // namespace vpi
+#endif

@@ -1,4 +1,4 @@
-Copyright (c) 2009-2021 FIRST and other WPILib and VexWPILib contributors
+Copyright (c) 2021 VexWPILib contributors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@ modification, are permitted provided that the following conditions are met:
      contributors may be used to endorse or promote products derived from
      this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY FIRST AND OTHER WPILIB/VexWPILib CONTRIBUTORS "AS IS" AND
+THIS SOFTWARE IS PROVIDED BY FIRST AND OTHER WPILIB CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY NONINFRINGEMENT AND FITNESS FOR A PARTICULAR
 PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL FIRST OR CONTRIBUTORS BE LIABLE FOR
